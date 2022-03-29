@@ -85,9 +85,8 @@ public class BbsDAO {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext() - (pageNumber-1)*10);
 			rs=pstmt.executeQuery();
-			while(rs.next())
-			{
-				Bbs bbs =new Bbs();
+			while(rs.next()) {
+				Bbs bbs = new Bbs();
 				bbs.setBbsID(rs.getInt(1));
 				bbs.setBbsTitle(rs.getString(2));
 				bbs.setUserID(rs.getString(3));
@@ -95,10 +94,7 @@ public class BbsDAO {
 				bbs.setBbsContent(rs.getString(5));
 				bbs.setBbsAvailable(rs.getInt(6));
 				list.add(bbs);
-				
 			}
-			
-			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -106,22 +102,93 @@ public class BbsDAO {
 	}
 	
 	
-	//	페이지 처리 메서드
-	public boolean nextPage(int pageNumber)
-	{
-		String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1;";
-		try
-		{
+	//������ ó�� �޼���
+	public boolean nextPage(int pageNumber) {
+		String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1";
+		try {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext() - (pageNumber-1)*10);
 			rs=pstmt.executeQuery();
-		}
-		catch(Exception e)
-		{
+			if(rs.next()) {
+				return true;
+			}
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
+	
+	//���� �б�
+	public Bbs getBbs(int bbsID) {
+		String SQL = "SELECT * FROM bbs WHERE bbsID = ?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1,bbsID);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				Bbs bbs = new Bbs();
+				bbs.setBbsID(rs.getInt(1));
+				bbs.setBbsTitle(rs.getString(2));
+				bbs.setUserID(rs.getString(3));
+				bbs.setBbsDate(rs.getString(4));
+				bbs.setBbsContent(rs.getString(5));
+				bbs.setBbsAvailable(rs.getInt(6));
+				return bbs;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	
+	
+	//�ۼ��� �޼ҵ�
+	public int update(String bbsTitle,String userID,String bbsContent,int bbsID) {
+		String SQL = "UPDATE bbs SET bbsTitle=?,bbsContent=? WHERE userID=? AND bbsID=?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setString(1, bbsTitle);
+			pstmt.setString(2, bbsContent);
+			pstmt.setString(3, userID);
+			pstmt.setInt(4, bbsID);
+			return pstmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//�����ͺ��̽� ����
+	}
+	
+	//����¥ ���� �޼ҵ�
+	public int delete(String userID,int bbsID) {
+		String SQL = "DELETE FROM bbs WHERE bbsID=? AND userID=?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			pstmt.setString(2, userID);			
+			return pstmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//�����ͺ��̽� ����
+	}
+	
+	//�۰�¥ ���� �޼ҵ�
+	public int delete2(String userID,int bbsID) {
+		String SQL = "UPDATE bbs SET bbsAvailable = 0 WHERE bbsID=? AND userID=?";
+		try {
+			
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			pstmt.setString(2, userID);			
+			return pstmt.executeUpdate();			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//�����ͺ��̽� ����
+	}
+	
+	
 }
 
 
