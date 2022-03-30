@@ -25,7 +25,8 @@ public class BbsDAO {
 		}
 	}
 	
-	//���� ��¥ ���ϱ�
+
+	//오늘 날짜 구하기
 	public String getDate() {
 		String SQL = "SELECT DATE(NOW())";
 		try {
@@ -41,7 +42,7 @@ public class BbsDAO {
 		return "";
 	}
 	
-	//������ �� ������ȣ ���ϱ�
+	//다음에 들어갈 문서번호 구하기
 	public int getNext() {
 		String SQL = "SELECT bbsID FROM bbs ORDER BY bbsID DESC";
 		try {
@@ -57,8 +58,7 @@ public class BbsDAO {
 		}
 		return -1;//������ȣ
 	}
-	
-	//������ �޼ҵ�
+	//글저장 메소드
 	public int write(String bbsTitle,String userID,String bbsContent) {
 		String SQL = "INSERT INTO bbs VALUES(?,?,?,?,?,?)";
 		try {
@@ -76,14 +76,33 @@ public class BbsDAO {
 		return -1;//�����ͺ��̽� ����
 	}
 	
+	//레코드의 개수
+	public int recordCount() {
+		String SQL = "SELECT * FROM bbs WHERE bbsAvailable=1";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);				
+			rs=pstmt.executeQuery();
+			int recordCount = 1;
+			while(rs.next()) {
+				recordCount++;
+			}
+			return recordCount;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	
-	//bbs��� �������� �޼ҵ�
+	
+	//bbs목록 가져오기 메소드
 	public ArrayList<Bbs> getList(int pageNumber){
-		String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
+		//String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1";
+		String SQL = "SELECT * FROM bbs WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?,10";                        
 		ArrayList<Bbs> list = new ArrayList<Bbs>();
 		try {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber-1)*10);
+			//pstmt.setInt(1, getNext() - (pageNumber-1)*10);
+			pstmt.setInt(1, recordCount() - (recordCount()-(pageNumber-1)*10));
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
 				Bbs bbs = new Bbs();
@@ -102,12 +121,15 @@ public class BbsDAO {
 	}
 	
 	
-	//������ ó�� �޼���
+	//페이지 처리 메서드
 	public boolean nextPage(int pageNumber) {
-		String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1";
+		//String SQL = "SELECT * FROM bbs WHERE bbsID<? AND bbsAvailable = 1";
+		String SQL = "SELECT * FROM bbs WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?,10";
+		
 		try {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber-1)*10);
+			//pstmt.setInt(1, getNext() - (pageNumber-1)*10);
+			pstmt.setInt(1, recordCount() - (recordCount()-(pageNumber-1)*10));
 			rs=pstmt.executeQuery();
 			if(rs.next()) {
 				return true;
@@ -117,8 +139,23 @@ public class BbsDAO {
 		}
 		return false;
 	}
-	
-	//���� �б�
+	//마지막 페이지 번호 메서드
+		public int getPages() {
+			String SQL = "SELECT * FROM bbs WHERE bbsAvailable=1";
+			try {
+				PreparedStatement pstmt=conn.prepareStatement(SQL);				
+				rs=pstmt.executeQuery();
+				int recordCount = 0;
+				while(rs.next()) {
+					recordCount++;
+				}
+				return (recordCount-1) / 10 + 1;
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			return -1;
+		}
+		//문서 읽기
 	public Bbs getBbs(int bbsID) {
 		String SQL = "SELECT * FROM bbs WHERE bbsID = ?";
 		try {
@@ -143,7 +180,7 @@ public class BbsDAO {
 	}
 	
 	
-	//�ۼ��� �޼ҵ�
+	//글수정 메소드
 	public int update(String bbsTitle,String userID,String bbsContent,int bbsID) {
 		String SQL = "UPDATE bbs SET bbsTitle=?,bbsContent=? WHERE userID=? AND bbsID=?";
 		try {
@@ -159,7 +196,7 @@ public class BbsDAO {
 		return -1;//�����ͺ��̽� ����
 	}
 	
-	//����¥ ���� �޼ҵ�
+	//글진짜 삭제 메소드
 	public int delete(String userID,int bbsID) {
 		String SQL = "DELETE FROM bbs WHERE bbsID=? AND userID=?";
 		try {
@@ -173,7 +210,7 @@ public class BbsDAO {
 		return -1;//�����ͺ��̽� ����
 	}
 	
-	//�۰�¥ ���� �޼ҵ�
+	//글가짜 삭제 메소드
 	public int delete2(String userID,int bbsID) {
 		String SQL = "UPDATE bbs SET bbsAvailable = 0 WHERE bbsID=? AND userID=?";
 		try {
@@ -185,16 +222,8 @@ public class BbsDAO {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1;//�����ͺ��̽� ����
+		return -1;//데이터베이스 오류
 	}
 	
 	
 }
-
-
-
-
-
-
-
-

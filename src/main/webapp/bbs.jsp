@@ -48,7 +48,6 @@
 					<ul class="nav navbar-nav">
 						<li><a href="./main.jsp">메인</a></li>
 						<li><a href="./bbs.jsp">게시판</a></li>
-						<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -65,7 +64,8 @@
 							</ul>
 							<%}else{ %>
 							<ul class="dropdown-menu">
-								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>								
+								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>
+								<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>								
 							</ul>
 							<%} %>
 						</li>
@@ -104,30 +104,34 @@
 						%>
 					</tbody>					
 				</table>
-				<%
-					if(pageNumber>1){
-				%>
+				
+				<!-- 이전페이지로 이동버튼 -->
+				<%if(pageNumber>1){	%>
 				<a href="bbs.jsp?pageNumber=<%= pageNumber - 1 %>" class="btn btn-success">이전</a>
+				<%}else{ %>
+				<a href="bbs.jsp?pageNumber=<%= pageNumber - 1 %>" onclick="return false" class="btn btn-success">이전</a>
 				<%} %>
-				<% 
-					if(bbsDAO.nextPage(pageNumber+1)){
-				%>
+				
+				
+				<!-- 페이지번호 직접지정 -->
+				<%
+				
+				int lastPage = bbsDAO.getPages();
+				if(lastPage != -1){
+				for(int idx=1;idx<=lastPage;idx++) {%>
+				<a href="bbs.jsp?pageNumber=<%=idx%>"><%=idx%></a>
+				<%}} %>
+				
+				<!-- 다음페이지로 이동버튼 -->
+				<%if(bbsDAO.nextPage(pageNumber+1)){%>
 				<a href="bbs.jsp?pageNumber=<%= pageNumber + 1 %>" class="btn btn-success">다음</a>
+				<%}else{ %>
+				<a href="bbs.jsp?pageNumber=<%= pageNumber + 1 %>" class="btn btn-success" onclick="return false;">다음</a>
 				<%} %>
 				
-				<%
-					if(userID==null)
-					{
-				%>
-				
-				<a href="./write.jsp" class="btn btn-success" style="display:none">글쓰기</a>
-				
-				<%
-					}
-					else
-					{
-				%>
-					<a href="./write.jsp" class="btn btn-success">글쓰기</a>
+				<!-- 글쓰기 버튼 -->
+				<% if(userID != null){ %>
+				<a href="./write.jsp" class="btn btn-success">글쓰기</a>
 				<%} %>
 			</div>
 			
@@ -140,9 +144,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-

@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="user.User" %>
+<%@ page import="user.UserDAO" %>
+<%@ page import="java.io.PrintWriter" %>
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +13,23 @@
 
 </head>
 <body>
+	<% 
+		PrintWriter script=response.getWriter();
+		
+		String userID = null;
+		if(session.getAttribute("userID") != null){
+			userID = (String)session.getAttribute("userID");
+		}
+		if(userID == null){
+			script.println("<script>");
+			script.println("alert('회원전용 페이지입니다.')");
+			script.println("location.href='./main.jsp'");
+			script.println("</script>");
+		}
+		
+		User user=new UserDAO().getUser(userID);
+	
+	%>
 	<section class="wrap">
 		<!-- 공통 영역  -->
 		<header>
@@ -40,8 +61,7 @@
 							</ul>
 							
 							<ul class="dropdown-menu" style="display:none">
-								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>
-								<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>								
+								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>								
 							</ul>
 						</li>
 					</ul>
@@ -56,30 +76,37 @@
 			<div class="container">
 				<div class="col-lg-12">
 					<div class="jumbotron" style="margin-top:20px;padding-top:30px">
-						<form method="post" action="./joinAction.jsp">
-							<h2 style="text-align:center">회원가입</h2>		
+						<form method="post" action="./changePasswordAction.jsp">
+							<h2 style="text-align:center">암호 변경</h2>		
 							<div class="form-group">
-								<input type="text" placeholder="아이디" class="form-control" name="userID">
-							</div>
-							<div class="form-group">
-								<input type="password" placeholder="패스워드" class="form-control" name="userPassword">
-							</div>
-							<div class="form-group">
-								<input type="text" placeholder="성명" class="form-control" name="userName">
-							</div>
-							<div class="form-group" style="text-align:center">
-								<label class="btn btn-primary">								
-									<input type="radio" name="userGender" value="남" checked> 남자
+								<label>사용자명
+									<input type="text" class="form-control" name="userName" value="<%= user.getUserName() %>" disabled>
 								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="userGender" value="여"> 여자
-								</label>
-								
 							</div>
 							<div class="form-group">
-								<input type="email" placeholder="이매일" class="form-control" name="userEmail">
+								<label>아이디
+									<input type="text" class="form-control" name="userID" value="<%= user.getUserID() %>" disabled>
+								</label>
 							</div>
-							<input type="submit" value="회원가입" class="btn btn-primary form-control">
+							<div class="form-group">
+								<label>패스워드
+									<input type="password" class="form-control" name="userPassword"  >
+								</label>
+							</div>
+							<div class="form-group">
+								<label>변경 패스워드
+									<input type="password" class="form-control" name="userPassword1">
+								</label>
+							</div>
+							<div class="form-group">
+								<label>변경 패스워드확인
+									<input type="password" class="form-control" name="userPassword2">
+								</label>
+							</div>
+							
+							<input type="submit" value="변경" class="btn btn-danger form-control">
+							<input type="button" value="취소" class="btn btn-success form-control" onClick="location.href='./main.jsp'">
+							
 						</form>
 					</div>
 				</div>
@@ -93,3 +120,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+
+
+
+

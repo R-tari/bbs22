@@ -59,7 +59,6 @@
 					<ul class="nav navbar-nav">
 						<li><a href="./main.jsp">메인</a></li>
 						<li><a href="./bbs.jsp">게시판</a></li>
-						<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -75,7 +74,8 @@
 							</ul>
 							<%}else{ %>
 							<ul class="dropdown-menu">
-								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>								
+								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>
+								<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>								
 							</ul>
 							<%} %>
 						</li>
@@ -123,9 +123,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-

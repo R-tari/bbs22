@@ -62,7 +62,8 @@
 								{
 							%>
 							<ul class="dropdown-menu">
-								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>								
+								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>
+								<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>								
 							</ul>
 							<%	} %>
 						</li>

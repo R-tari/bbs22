@@ -21,13 +21,20 @@
 			userID=(String)session.getAttribute("userID");
 		}
 		
-		
-		
+		if(userID==null)
+		{
+			script.println("<script>");
+			script.println("alert('로그인 후 이용해시기 바랍니다.')");
+			script.println("location.href='bbs.jsp'");
+			script.println("</script>");
+		}
+	
+
 		
 		
 		
 		//bbs인스턴스 생성
-		Bbs bbs = new BbsDAO().getBbs(bbsID);
+		User user = new UserDAO().getUser(userID);
 	%>
 	<section class="wrap">
 		<!-- 공통 영역  -->
@@ -79,13 +86,19 @@
 			<div class="container">
 				<div class="col-lg-12">
 					<div class="jumbotron" style="margin-top:20px;padding-top:30px">
-						<h2 style="text-align:center">게시판 글 보기</h2>		
+						<h2 style="text-align:center">My Page</h2>		
 						<div>
+							<span>아이디</span>
+							<span><%= user.getUserID() %></span>
+							<br>
+							<span>패스워드</span>
+							<span>****</span>
+							<br>
 							<span>성명</span>
 							<span><%= user.getUserName() %></span>
 							<br>
-							<span>아이디</span>
-							<span><%= user.getUserID() %></span>
+							<span>성별</span>
+							<span><%= user.getUserGender() %></span>
 							<br>
 							<span>이메일</span>
 							<span><%= user.getUserEmail() %></span>
@@ -95,7 +108,9 @@
 						</div>
 					</div>
 					<div class="button-group">
-						<a href="./bbs.jsp" class="btn btn-success">목록</a>
+						<a href="./changePassword.jsp" class="btn btn-success">패스워드 변경</a>
+						<a href="./signOut.jsp" class="btn btn-success">회원탈퇴</a>
+						<a href="./main.jsp" class="btn btn-success">확인</a>
 											
 					</div>
 				</div>

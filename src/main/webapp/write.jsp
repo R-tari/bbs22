@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.io.PrintWriter" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,10 +11,17 @@
 </head>
 <body>
 	<%
+		PrintWriter script = response.getWriter();
 		//로그인상태 확인
 		String userID = null;
 		if(session.getAttribute("userID") != null){
 			userID=(String)session.getAttribute("userID");
+		}
+		if(userID == null){
+			script.println("<script>");
+			script.println("alert('로그인후 이용 가능합니다.')");
+			script.println("location.href='./login.jsp'");
+			script.println("</script>");
 		}
 	%>
 	<section class="wrap">
@@ -34,7 +42,6 @@
 					<ul class="nav navbar-nav">
 						<li><a href="./main.jsp">메인</a></li>
 						<li><a href="./bbs.jsp">게시판</a></li>
-						<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -50,7 +57,8 @@
 							</ul>
 							<%}else{ %>
 							<ul class="dropdown-menu">
-								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>								
+								<li class="active"><a href="./logoutAction.jsp">로그아웃</a></li>
+								<li><a href="./mypage.jsp" style="font-size:15px">Mypage</a></li>								
 							</ul>
 							<%} %>
 						</li>
@@ -88,9 +96,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-
